@@ -1,0 +1,1198 @@
+name: Build Jarvis APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write signing key
+        run: |
+          base64 -d > jarvis.keystore << 'EOF'
+          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
+          EOF
+
+      - name: Write project files
+        run: |
+          mkdir -p app
+          cat > app/build.gradle.kts << 'EOF'
+          plugins {
+              id("com.android.application")
+              id("org.jetbrains.kotlin.android")
+          }
+
+          android {
+              namespace = "com.example.jarvis"
+              compileSdk = 34
+
+              defaultConfig {
+                  applicationId = "com.example.jarvis"
+                  minSdk = 24
+                  targetSdk = 34
+                  versionCode = 1
+                  versionName = "1.0"
+              }
+
+              signingConfigs {
+                  create("fixed") {
+                      storeFile = rootProject.file("jarvis.keystore")
+                      storePassword = "android"
+                      keyAlias = "jarvis"
+                      keyPassword = "android"
+                  }
+              }
+
+              buildTypes {
+                  getByName("debug") {
+                      signingConfig = signingConfigs.getByName("fixed")
+                  }
+              }
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+              kotlinOptions {
+                  jvmTarget = "17"
+              }
+          }
+
+          dependencies {
+              implementation("androidx.core:core-ktx:1.13.1")
+              implementation("androidx.appcompat:appcompat:1.7.0")
+          }
+          EOF
+          mkdir -p app/src/main
+          cat > app/src/main/AndroidManifest.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.RECORD_AUDIO" />
+              <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
+
+              <queries>
+                  <intent>
+                      <action android:name="android.intent.action.MAIN" />
+                      <category android:name="android.intent.category.LAUNCHER" />
+                  </intent>
+                  <intent>
+                      <action android:name="android.speech.RecognitionService" />
+                  </intent>
+                  <intent>
+                      <action android:name="android.intent.action.TTS_SERVICE" />
+                  </intent>
+              </queries>
+
+              <application
+                  android:allowBackup="false"
+                  android:label="Jarvis"
+                  android:theme="@style/Theme.AppCompat.NoActionBar">
+
+                  <activity
+                      android:name=".MainActivity"
+                      android:exported="true"
+                      android:screenOrientation="portrait">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+
+                  <service
+                      android:name=".JarvisAccessibilityService"
+                      android:exported="false"
+                      android:label="Jarvis yordamchi"
+                      android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+                      <intent-filter>
+                          <action android:name="android.accessibilityservice.AccessibilityService" />
+                      </intent-filter>
+                      <meta-data
+                          android:name="android.accessibilityservice"
+                          android:resource="@xml/accessibility_service_config" />
+                  </service>
+              </application>
+          </manifest>
+          EOF
+          mkdir -p app/src/main/java/com/example/jarvis
+          cat > app/src/main/java/com/example/jarvis/Brain.kt << 'EOF'
+          package com.example.jarvis
+
+          import org.json.JSONArray
+          import org.json.JSONObject
+          import java.net.HttpURLConnection
+          import java.net.URL
+          import java.text.SimpleDateFormat
+          import java.util.Date
+          import java.util.Locale
+
+          object Brain {
+
+              // Model nomi o'zgargan bo'lsa, faqat shu qatorlarni almashtiring. Kalit sk-ant bilan boshlansa Claude, aks holda Gemini ishlatiladi
+              const val MODEL = "claude-sonnet-5-5"
+              const val GEMINI_MODEL = "gemini-flash-latest"
+
+              private val SYSTEM = """
+          Sen JARVIS - foydalanuvchining erkak ovozli do'sti va yordamchisan. Telefonda ovoz orqali gaplashyapsan, shuning uchun tabiiy, jonli, iliq, ozgina hazilkash odamdek gapir. Javoblar qisqa (1-3 gap), o'zbek tilida (lotin). Emoji, ro'yxat va maxsus belgilar ishlatma. Suhbat zerikarli bo'lmasin: ba'zan qiziq narsa aytib yoki qisqa savol berib suhbatni davom ettir. Oldingi gaplarni eslab qol.
+
+          FAQAT bitta JSON obyekt qaytar, boshqa matn yozma. Maydonlar:
+          {"type":"chat|youtube|telegram|app|open|call|alarm|timer","reply":"","query":"","contact":"","message":"","app":"","url":"","number":"","hour":0,"minute":0,"seconds":0}
+
+          - chat: oddiy suhbat va savol-javob. reply = javobing.
+          - youtube: query = qidiruv matni (faqat ochish bo'lsa bo'sh qoldir).
+          - telegram: contact = kimga, message = yuboriladigan matn.
+          - app: telefondagi ilovani ochish, app = ilova nomi (Instagram, WhatsApp, Kamera, Sozlamalar, Spotify va hokazo).
+          - open: sayt ochish, url = https:// havola. Google qidiruv: https://www.google.com/search?q=SOZ ; xarita: https://www.google.com/maps/search/?api=1&query=JOY . Maxsus belgilar URL-kodlansin.
+          - call: number = telefon raqami (faqat foydalanuvchi aytgan raqam).
+          - alarm: hour va minute (24 soatlik). timer: seconds.
+          Har doim reply ber: nima qilayotganing haqida qisqa va tabiiy gap.
+          """.trimIndent()
+
+              fun ask(key: String, history: JSONArray, user: String): JSONObject {
+                  val now = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date())
+                  val system = SYSTEM + "\nHozirgi vaqt: " + now
+                  val raw = if (key.startsWith("sk-ant")) askClaude(key, system, history, user)
+                  else askGemini(key, system, history, user)
+
+                  val s = raw.indexOf('{')
+                  val e = raw.lastIndexOf('}')
+                  val out = try {
+                      JSONObject(raw.substring(s, e + 1))
+                  } catch (ex: Exception) {
+                      JSONObject().put("type", "chat").put("reply", raw)
+                  }
+
+                  history.put(JSONObject().put("role", "user").put("content", user))
+                  history.put(JSONObject().put("role", "assistant").put("content", out.toString()))
+                  while (history.length() > 16) {
+                      history.remove(0)
+                      history.remove(0)
+                  }
+                  return out
+              }
+
+              private fun post(url: String, headers: Map<String, String>, body: JSONObject): String {
+                  val conn = URL(url).openConnection() as HttpURLConnection
+                  conn.requestMethod = "POST"
+                  conn.doOutput = true
+                  conn.connectTimeout = 15000
+                  conn.readTimeout = 60000
+                  conn.setRequestProperty("content-type", "application/json")
+                  for ((k, v) in headers) conn.setRequestProperty(k, v)
+                  conn.outputStream.use { it.write(body.toString().toByteArray(Charsets.UTF_8)) }
+                  val code = conn.responseCode
+                  val stream = if (code in 200..299) conn.inputStream else conn.errorStream
+                  val text = stream?.bufferedReader()?.use { it.readText() } ?: ""
+                  if (code !in 200..299) throw Exception("API " + code + ": " + text.take(150))
+                  return text
+              }
+
+              private fun askClaude(key: String, system: String, history: JSONArray, user: String): String {
+                  val msgs = JSONArray()
+                  for (i in 0 until history.length()) msgs.put(history.get(i))
+                  msgs.put(JSONObject().put("role", "user").put("content", user))
+                  val body = JSONObject()
+                      .put("model", MODEL)
+                      .put("max_tokens", 500)
+                      .put("system", system)
+                      .put("messages", msgs)
+                  val text = post(
+                      "https://api.anthropic.com/v1/messages",
+                      mapOf("x-api-key" to key, "anthropic-version" to "2023-06-01"),
+                      body
+                  )
+                  return JSONObject(text).getJSONArray("content").getJSONObject(0).getString("text").trim()
+              }
+
+              private fun part(text: String) = JSONArray().put(JSONObject().put("text", text))
+
+              private fun askGemini(key: String, system: String, history: JSONArray, user: String): String {
+                  val contents = JSONArray()
+                  for (i in 0 until history.length()) {
+                      val m = history.getJSONObject(i)
+                      val role = if (m.getString("role") == "assistant") "model" else "user"
+                      contents.put(JSONObject().put("role", role).put("parts", part(m.getString("content"))))
+                  }
+                  contents.put(JSONObject().put("role", "user").put("parts", part(user)))
+                  val body = JSONObject()
+                      .put("systemInstruction", JSONObject().put("parts", part(system)))
+                      .put("contents", contents)
+                      .put(
+                          "generationConfig",
+                          JSONObject().put("maxOutputTokens", 1500).put("responseMimeType", "application/json")
+                      )
+                  val text = post(
+                      "https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent",
+                      mapOf("x-goog-api-key" to key),
+                      body
+                  )
+                  return JSONObject(text).getJSONArray("candidates").getJSONObject(0)
+                      .getJSONObject("content").getJSONArray("parts").getJSONObject(0)
+                      .getString("text").trim()
+              }
+          }
+          EOF
+          mkdir -p app/src/main/java/com/example/jarvis
+          cat > app/src/main/java/com/example/jarvis/HudView.kt << 'EOF'
+          package com.example.jarvis
+
+          import android.content.Context
+          import android.graphics.Canvas
+          import android.graphics.Color
+          import android.graphics.DashPathEffect
+          import android.graphics.LinearGradient
+          import android.graphics.Paint
+          import android.graphics.RadialGradient
+          import android.graphics.Shader
+          import android.view.View
+          import kotlin.math.PI
+          import kotlin.math.cos
+          import kotlin.math.max
+          import kotlin.math.min
+          import kotlin.math.sin
+
+          enum class HudState { IDLE, LISTENING, THINKING, SPEAKING }
+
+          class HudView(context: Context) : View(context) {
+
+              @Volatile var state = HudState.IDLE
+              @Volatile var level = 0f
+
+              private val d = resources.displayMetrics.density
+              private val p = Paint(Paint.ANTI_ALIAS_FLAG)
+              private val cyan = Color.rgb(25, 211, 255)
+              private val pale = Color.rgb(142, 242, 255)
+              private var last = System.nanoTime()
+              private var tm = 0f
+              private var smooth = 0f
+              private var a1 = 0f
+              private var a2 = 0f
+              private var a3 = 0f
+              private var a4 = 0f
+              private var a5 = 0f
+              private val rnd = java.util.Random()
+
+              private fun fresh(style: Paint.Style = Paint.Style.STROKE) {
+                  p.reset()
+                  p.isAntiAlias = true
+                  p.style = style
+              }
+
+              private fun ring(c: Canvas, cx: Float, cy: Float, r: Float, sw: Float, dash: FloatArray?, rot: Float, alpha: Int) {
+                  c.save()
+                  c.rotate(rot, cx, cy)
+                  for (pass in 0..1) {
+                      fresh()
+                      p.color = cyan
+                      if (dash != null) p.pathEffect = DashPathEffect(dash, 0f)
+                      if (pass == 0) {
+                          p.strokeWidth = sw * 3f
+                          p.alpha = alpha / 6
+                      } else {
+                          p.strokeWidth = sw
+                          p.alpha = alpha
+                      }
+                      c.drawCircle(cx, cy, r, p)
+                  }
+                  c.restore()
+              }
+
+              override fun onDraw(c: Canvas) {
+                  val now = System.nanoTime()
+                  val dt = min((now - last) / 1e9f, 0.05f)
+                  last = now
+                  tm += dt
+
+                  val sp = when (state) {
+                      HudState.IDLE -> 1f
+                      HudState.LISTENING -> 2.6f
+                      HudState.THINKING -> 5f
+                      HudState.SPEAKING -> 2f
+                  }
+                  a1 = (a1 + 8f * sp * dt) % 360f
+                  a2 = (a2 + 14f * sp * dt) % 360f
+                  a3 = (a3 - 18f * sp * dt) % 360f
+                  a4 = (a4 + 30f * sp * dt) % 360f
+                  a5 = (a5 - 55f * sp * dt) % 360f
+
+                  val target = when (state) {
+                      HudState.IDLE -> 0.12f
+                      HudState.LISTENING -> level
+                      HudState.THINKING -> 0.3f + 0.2f * sin(tm * 6f)
+                      HudState.SPEAKING -> 0.35f + 0.5f * rnd.nextFloat()
+                  }
+                  smooth += (target - smooth) * min(1f, dt * 10f)
+
+                  val w = width.toFloat()
+                  val h = height.toFloat()
+                  val cx = w / 2f
+                  val cy = h * 0.40f
+                  val big = min(w * 0.46f, h * 0.30f)
+
+                  // background
+                  fresh(Paint.Style.FILL)
+                  p.shader = RadialGradient(
+                      cx, cy, max(w, h) * 0.8f,
+                      intArrayOf(Color.rgb(6, 48, 74), Color.rgb(2, 21, 37), Color.rgb(1, 10, 18)),
+                      floatArrayOf(0f, 0.45f, 1f), Shader.TileMode.CLAMP
+                  )
+                  c.drawRect(0f, 0f, w, h, p)
+
+                  // grid
+                  fresh()
+                  p.color = cyan
+                  p.alpha = 22
+                  p.strokeWidth = 1f
+                  var gx = 0f
+                  while (gx < w) { c.drawLine(gx, 0f, gx, h, p); gx += 44f * d }
+                  var gy = 0f
+                  while (gy < h) { c.drawLine(0f, gy, w, gy, p); gy += 44f * d }
+
+                  // scanning band
+                  val bandH = 120f * d
+                  val sy = ((tm / 7f) % 1f) * (h + bandH) - bandH
+                  fresh(Paint.Style.FILL)
+                  p.shader = LinearGradient(
+                      0f, sy, 0f, sy + bandH,
+                      intArrayOf(Color.argb(0, 25, 211, 255), Color.argb(34, 25, 211, 255), Color.argb(0, 25, 211, 255)),
+                      floatArrayOf(0f, 0.5f, 1f), Shader.TileMode.CLAMP
+                  )
+                  c.drawRect(0f, sy, w, sy + bandH, p)
+
+                  // corner brackets
+                  fresh()
+                  p.color = cyan
+                  p.strokeWidth = 3f * d
+                  val m = 12f * d
+                  val l = 26f * d
+                  c.drawLine(m, m, m + l, m, p); c.drawLine(m, m, m, m + l, p)
+                  c.drawLine(w - m, m, w - m - l, m, p); c.drawLine(w - m, m, w - m, m + l, p)
+                  c.drawLine(m, h - m, m + l, h - m, p); c.drawLine(m, h - m, m, h - m - l, p)
+                  c.drawLine(w - m, h - m, w - m - l, h - m, p); c.drawLine(w - m, h - m, w - m, h - m - l, p)
+
+                  // rings
+                  ring(c, cx, cy, big, 2f * d, floatArrayOf(2f * d, 12f * d), a1, 230)
+
+                  c.save()
+                  c.rotate(a2, cx, cy)
+                  fresh()
+                  p.color = cyan
+                  p.alpha = 190
+                  p.strokeWidth = 1.5f * d
+                  for (i in 0 until 120) {
+                      val ang = i * 3.0 * PI / 180.0
+                      val long = i % 5 == 0
+                      val r1 = big * 0.93f
+                      val r2 = r1 - (if (long) 9f else 5f) * d
+                      c.drawLine(
+                          cx + r1 * cos(ang).toFloat(), cy + r1 * sin(ang).toFloat(),
+                          cx + r2 * cos(ang).toFloat(), cy + r2 * sin(ang).toFloat(), p
+                      )
+                  }
+                  c.restore()
+
+                  ring(c, cx, cy, big * 0.83f, 9f * d, floatArrayOf(110f * d, 26f * d, 18f * d, 26f * d), a3, 140)
+                  ring(c, cx, cy, big * 0.72f, 2.5f * d, floatArrayOf(8f * d, 6f * d), a4, 230)
+
+                  c.save()
+                  c.rotate(a5, cx, cy)
+                  val rr = big * 0.62f
+                  for (pass in 0..1) {
+                      fresh()
+                      p.color = cyan
+                      p.strokeCap = Paint.Cap.ROUND
+                      if (pass == 0) { p.strokeWidth = 18f * d; p.alpha = 40 } else { p.strokeWidth = 5f * d; p.alpha = 255 }
+                      c.drawArc(cx - rr, cy - rr, cx + rr, cy + rr, 0f, 110f, false, p)
+                  }
+                  c.restore()
+                  ring(c, cx, cy, big * 0.62f, 1f * d, null, 0f, 90)
+
+                  // sound bars
+                  val r0 = big * 0.40f
+                  fresh()
+                  p.color = pale
+                  p.strokeWidth = 2.5f * d
+                  p.strokeCap = Paint.Cap.ROUND
+                  for (i in 0 until 72) {
+                      val ang = i / 72.0 * 2.0 * PI
+                      val n = (sin(tm * 2f + i * 0.7f) * sin(tm * 1.3f + i * 0.23f)) * 0.5f + 0.5f
+                      val len = big * 0.02f + n * smooth * big * 0.2f
+                      val ca = cos(ang).toFloat()
+                      val sa = sin(ang).toFloat()
+                      c.drawLine(cx + ca * r0, cy + sa * r0, cx + ca * (r0 + len), cy + sa * (r0 + len), p)
+                  }
+
+                  // core
+                  val orbR = big * 0.30f * (1f + 0.04f * sin(tm * 2f) + smooth * 0.10f)
+                  for (k in 3 downTo 1) {
+                      fresh(Paint.Style.FILL)
+                      p.color = cyan
+                      p.alpha = 28
+                      c.drawCircle(cx, cy, orbR + k * 9f * d, p)
+                  }
+                  fresh(Paint.Style.FILL)
+                  p.shader = RadialGradient(
+                      cx, cy - orbR * 0.1f, orbR,
+                      intArrayOf(Color.rgb(233, 253, 255), Color.rgb(95, 230, 255), Color.rgb(10, 127, 168), Color.rgb(3, 40, 61)),
+                      floatArrayOf(0f, 0.22f, 0.58f, 1f), Shader.TileMode.CLAMP
+                  )
+                  c.drawCircle(cx, cy, orbR, p)
+                  fresh()
+                  p.color = pale
+                  p.strokeWidth = 1.5f * d
+                  c.drawCircle(cx, cy, orbR, p)
+                  fresh(Paint.Style.FILL)
+                  p.color = Color.WHITE
+                  p.textSize = 13f * d
+                  p.textAlign = Paint.Align.CENTER
+                  p.letterSpacing = 0.25f
+                  c.drawText("JARVIS", cx, cy + 4.5f * d, p)
+
+                  postInvalidateOnAnimation()
+              }
+          }
+          EOF
+          mkdir -p app/src/main/java/com/example/jarvis
+          cat > app/src/main/java/com/example/jarvis/JarvisAccessibilityService.kt << 'EOF'
+          package com.example.jarvis
+
+          import android.accessibilityservice.AccessibilityService
+          import android.view.accessibility.AccessibilityEvent
+          import android.view.accessibility.AccessibilityNodeInfo
+
+          class JarvisAccessibilityService : AccessibilityService() {
+
+              companion object {
+                  @Volatile var isRunning = false
+                  @Volatile var pendingContact: String? = null
+                  @Volatile var stage = 0 // 0 = kontaktni tanlash, 1 = "Yuborish"ni bosish
+              }
+
+              override fun onServiceConnected() { isRunning = true }
+              override fun onUnbind(intent: android.content.Intent?): Boolean { isRunning = false; return super.onUnbind(intent) }
+              override fun onInterrupt() {}
+
+              override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+                  val contact = pendingContact ?: return
+                  if (event?.packageName != "org.telegram.messenger") return
+                  val root = rootInActiveWindow ?: return
+
+                  when (stage) {
+                      0 -> {
+                          val node = root.findAccessibilityNodeInfosByText(contact).firstOrNull()
+                          if (node != null && clickNode(node)) stage = 1
+                      }
+                      1 -> {
+                          for (label in listOf("Send", "Yuborish", "Отправить")) {
+                              val btn = root.findAccessibilityNodeInfosByText(label).firstOrNull()
+                              if (btn != null && clickNode(btn)) {
+                                  pendingContact = null
+                                  stage = 0
+                                  return
+                              }
+                          }
+                      }
+                  }
+              }
+
+              private fun clickNode(node: AccessibilityNodeInfo): Boolean {
+                  var n: AccessibilityNodeInfo? = node
+                  while (n != null) {
+                      if (n.isClickable) return n.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                      n = n.parent
+                  }
+                  return false
+              }
+          }
+          EOF
+          mkdir -p app/src/main/java/com/example/jarvis
+          cat > app/src/main/java/com/example/jarvis/MainActivity.kt << 'EOF'
+          package com.example.jarvis
+
+          import android.Manifest
+          import android.content.Context
+          import android.content.Intent
+          import android.content.SharedPreferences
+          import android.content.pm.PackageManager
+          import android.graphics.Color
+          import android.graphics.Typeface
+          import android.net.Uri
+          import android.os.Bundle
+          import android.os.Handler
+          import android.os.Looper
+          import android.provider.AlarmClock
+          import android.provider.MediaStore
+          import android.provider.Settings
+          import android.speech.RecognitionListener
+          import android.speech.RecognizerIntent
+          import android.speech.SpeechRecognizer
+          import android.text.InputType
+          import android.view.Gravity
+          import android.view.WindowManager
+          import android.widget.Button
+          import android.widget.EditText
+          import android.widget.FrameLayout
+          import android.widget.LinearLayout
+          import android.widget.TextView
+          import androidx.activity.result.contract.ActivityResultContracts
+          import androidx.appcompat.app.AlertDialog
+          import androidx.appcompat.app.AppCompatActivity
+          import androidx.core.content.ContextCompat
+          import androidx.lifecycle.Lifecycle
+          import org.json.JSONArray
+          import org.json.JSONObject
+          import java.net.URLEncoder
+
+          class MainActivity : AppCompatActivity() {
+
+              private lateinit var hud: HudView
+              private lateinit var status: TextView
+              private lateinit var line: TextView
+              private lateinit var speaker: Speaker
+              private lateinit var prefs: SharedPreferences
+              private val ui = Handler(Looper.getMainLooper())
+
+              private var recognizer: SpeechRecognizer? = null
+              private var convo = false
+              private var busy = false
+              private var listening = false
+              private var errCount = 0
+              private var li = 0
+              private val langs = listOf("uz-UZ", "ru-RU", "en-US")
+              private val history = JSONArray()
+
+              private val micPerm = registerForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
+                  if (ok) startConvo() else setLine("Mikrofon ruxsati kerak. Telefon sozlamalaridan yoqing.")
+              }
+
+              // ---------------------------------------------------------------- UI
+
+              override fun onCreate(savedInstanceState: Bundle?) {
+                  super.onCreate(savedInstanceState)
+                  window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                  window.statusBarColor = Color.BLACK
+                  prefs = getSharedPreferences("jarvis", Context.MODE_PRIVATE)
+                  speaker = Speaker(this, ui)
+                  loadKeys()
+
+                  val d = resources.displayMetrics.density
+                  val root = FrameLayout(this)
+                  hud = HudView(this)
+                  root.addView(hud, FrameLayout.LayoutParams(-1, -1))
+
+                  val title = TextView(this).apply {
+                      text = "J.A.R.V.I.S"
+                      setTextColor(Color.rgb(142, 242, 255))
+                      textSize = 20f
+                      letterSpacing = 0.15f
+                      typeface = Typeface.DEFAULT_BOLD
+                  }
+                  root.addView(title, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.START).apply {
+                      setMargins((30 * d).toInt(), (36 * d).toInt(), 0, 0)
+                  })
+
+                  val gear = TextView(this).apply {
+                      text = "\u2699"
+                      setTextColor(Color.rgb(25, 211, 255))
+                      textSize = 28f
+                      setPadding((14 * d).toInt(), (8 * d).toInt(), (14 * d).toInt(), (8 * d).toInt())
+                      setOnClickListener { showSettings() }
+                  }
+                  root.addView(gear, FrameLayout.LayoutParams(-2, -2, Gravity.TOP or Gravity.END).apply {
+                      setMargins(0, (28 * d).toInt(), (18 * d).toInt(), 0)
+                  })
+
+                  status = TextView(this).apply {
+                      setTextColor(Color.rgb(25, 211, 255))
+                      textSize = 13f
+                      letterSpacing = 0.3f
+                      gravity = Gravity.CENTER
+                  }
+                  line = TextView(this).apply {
+                      setTextColor(Color.rgb(200, 245, 255))
+                      textSize = 19f
+                      gravity = Gravity.CENTER
+                      maxLines = 5
+                  }
+                  val bottom = LinearLayout(this).apply {
+                      orientation = LinearLayout.VERTICAL
+                      setPadding((26 * d).toInt(), 0, (26 * d).toInt(), 0)
+                      addView(status)
+                      addView(line)
+                  }
+                  root.addView(bottom, FrameLayout.LayoutParams(-1, -2, Gravity.BOTTOM).apply {
+                      setMargins(0, 0, 0, (34 * d).toInt())
+                  })
+
+                  hud.setOnClickListener { toggle() }
+                  setContentView(root)
+                  setStatus("TAYYOR")
+                  setLine("Yadroni bosing va gapiring.")
+              }
+
+              private fun setStatus(s: String) { status.text = s }
+              private fun setLine(s: String) { line.text = s }
+
+              private fun loadKeys() {
+                  speaker.azureKey = (prefs.getString("azure_key", "") ?: "").trim()
+                  speaker.azureRegion = (prefs.getString("azure_region", "") ?: "").trim().ifEmpty { "westeurope" }
+              }
+
+              private fun showSettings() {
+                  val d = resources.displayMetrics.density
+                  val box = LinearLayout(this).apply {
+                      orientation = LinearLayout.VERTICAL
+                      setPadding((20 * d).toInt(), (10 * d).toInt(), (20 * d).toInt(), 0)
+                  }
+                  fun field(hint: String, key: String, secret: Boolean): EditText {
+                      val e = EditText(this)
+                      e.hint = hint
+                      e.setText(prefs.getString(key, ""))
+                      e.setSingleLine()
+                      if (secret) e.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                      box.addView(e)
+                      return e
+                  }
+                  val claude = field("Claude yoki Gemini API kaliti", "claude", true)
+                  val note = TextView(this)
+                  note.text = "Quyidagisi ixtiyoriy: Azure Speech kaliti bo'lsa, haqiqiy erkak ovozi (Sardor) ishlaydi."
+                  note.textSize = 13f
+                  box.addView(note)
+                  val azKey = field("Azure Speech kaliti", "azure_key", true)
+                  val azRegion = field("Azure region (masalan: westeurope)", "azure_region", false)
+                  val acc = Button(this)
+                  acc.text = "Accessibility sozlamalari (Telegram uchun)"
+                  acc.setOnClickListener { startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)) }
+                  box.addView(acc)
+
+                  AlertDialog.Builder(this)
+                      .setTitle("Sozlamalar")
+                      .setView(box)
+                      .setPositiveButton("Saqlash") { _, _ ->
+                          prefs.edit()
+                              .putString("claude", claude.text.toString().trim())
+                              .putString("azure_key", azKey.text.toString().trim())
+                              .putString("azure_region", azRegion.text.toString().trim())
+                              .apply()
+                          loadKeys()
+                      }
+                      .setNegativeButton("Yopish", null)
+                      .show()
+              }
+
+              // ---------------------------------------------------------------- conversation
+
+              private fun toggle() {
+                  if (convo) { stopConvo(); return }
+                  if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                      micPerm.launch(Manifest.permission.RECORD_AUDIO)
+                      return
+                  }
+                  startConvo()
+              }
+
+              private fun startConvo() {
+                  if ((prefs.getString("claude", "") ?: "").isBlank()) {
+                      setLine("Avval API kalitini kiriting (Gemini yoki Claude) (tepada o'ngdagi belgi).")
+                      showSettings()
+                      return
+                  }
+                  if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+                      setLine("Telefonda Google ovoz aniqlash topilmadi.")
+                      return
+                  }
+                  convo = true
+                  errCount = 0
+                  busy = true
+                  hud.state = HudState.SPEAKING
+                  setStatus("")
+                  speaker.speak("Eshitaman.") { busy = false; listen() }
+              }
+
+              private fun stopConvo() {
+                  convo = false
+                  busy = false
+                  listening = false
+                  recognizer?.cancel()
+                  speaker.stop()
+                  hud.state = HudState.IDLE
+                  hud.level = 0f
+                  setStatus("TAYYOR")
+              }
+
+              private fun listen() {
+                  if (!convo || busy || listening) return
+                  val r = recognizer ?: SpeechRecognizer.createSpeechRecognizer(this).also {
+                      it.setRecognitionListener(listener)
+                      recognizer = it
+                  }
+                  val i = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+                      .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                      .putExtra(RecognizerIntent.EXTRA_LANGUAGE, langs[li])
+                      .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+                  listening = true
+                  hud.state = HudState.LISTENING
+                  setStatus("ESHITYAPMAN")
+                  r.startListening(i)
+              }
+
+              private val listener = object : RecognitionListener {
+                  override fun onReadyForSpeech(params: Bundle?) {}
+                  override fun onBeginningOfSpeech() {}
+                  override fun onBufferReceived(buffer: ByteArray?) {}
+                  override fun onEndOfSpeech() {}
+                  override fun onEvent(eventType: Int, params: Bundle?) {}
+
+                  override fun onRmsChanged(rmsdB: Float) {
+                      hud.level = ((rmsdB + 2f) / 12f).coerceIn(0f, 1f)
+                  }
+
+                  override fun onPartialResults(partialResults: Bundle?) {
+                      val t = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+                      if (!t.isNullOrBlank()) setLine(t)
+                  }
+
+                  override fun onResults(results: Bundle?) {
+                      listening = false
+                      val t = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+                      if (!convo) return
+                      if (t.isNullOrBlank()) { ui.postDelayed({ listen() }, 300); return }
+                      handle(t)
+                  }
+
+                  override fun onError(error: Int) {
+                      listening = false
+                      if (!convo) return
+                      when (error) {
+                          5 -> {} // ERROR_CLIENT: o'zimiz bekor qilganda
+                          6, 7 -> { // timeout / no match
+                              if (++errCount < 6) ui.postDelayed({ listen() }, 300)
+                              else { stopConvo(); setLine("Hech narsa eshitilmadi. Yadroni qayta bosing.") }
+                          }
+                          12, 13 -> { // til qo'llanmaydi
+                              if (li < langs.size - 1) { li++; ui.postDelayed({ listen() }, 200) }
+                              else { stopConvo(); setLine("Ovoz aniqlash tili topilmadi.") }
+                          }
+                          8 -> { recognizer?.cancel(); ui.postDelayed({ listen() }, 500) }
+                          9 -> { stopConvo(); micPerm.launch(Manifest.permission.RECORD_AUDIO) }
+                          2, 4 -> { stopConvo(); setLine("Internet kerak (ovoz aniqlash uchun).") }
+                          else -> { stopConvo(); setLine("Ovoz xatosi: " + error) }
+                      }
+                  }
+              }
+
+              private fun handle(text: String) {
+                  errCount = 0
+                  busy = true
+                  hud.state = HudState.THINKING
+                  setStatus("O'YLAMOQDA")
+                  setLine(text)
+                  val key = prefs.getString("claude", "") ?: ""
+                  Thread {
+                      var cmd: JSONObject? = null
+                      var err = ""
+                      try {
+                          cmd = Brain.ask(key, history, text)
+                      } catch (e: Exception) {
+                          err = e.message ?: e.toString()
+                      }
+                      val result = cmd
+                      ui.post { if (convo) act(result, err) }
+                  }.start()
+              }
+
+              private fun act(cmd: JSONObject?, err: String) {
+                  if (cmd == null) {
+                      setLine("Xato: " + err)
+                      hud.state = HudState.SPEAKING
+                      speaker.speak("Ulanib bo'lmadi. Internet yoki kalitni tekshiring.") { stopConvo() }
+                      return
+                  }
+                  val reply = cmd.optString("reply")
+                  setLine(reply)
+                  setStatus("")
+                  hud.state = HudState.SPEAKING
+
+                  var action: (() -> Boolean)? = null
+                  when (cmd.optString("type")) {
+                      "youtube" -> {
+                          val q = cmd.optString("query").trim()
+                          val u = if (q.isEmpty()) "https://www.youtube.com"
+                          else "https://www.youtube.com/results?search_query=" + URLEncoder.encode(q, "UTF-8")
+                          action = { view(u, "com.google.android.youtube") }
+                      }
+                      "telegram" -> {
+                          val c = cmd.optString("contact")
+                          val m = cmd.optString("message")
+                          action = { sendTelegram(c, m) }
+                      }
+                      "app" -> {
+                          val name = cmd.optString("app")
+                          action = { openApp(name) }
+                      }
+                      "open" -> {
+                          val u = cmd.optString("url")
+                          if (u.startsWith("https://")) action = { view(u, null) }
+                      }
+                      "call" -> {
+                          val n = cmd.optString("number").filter { it.isDigit() || it == '+' }
+                          if (n.isNotEmpty()) action = { startSafe(Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + n))) }
+                      }
+                      "alarm" -> {
+                          val h = cmd.optInt("hour")
+                          val mi = cmd.optInt("minute")
+                          action = {
+                              startSafe(
+                                  Intent(AlarmClock.ACTION_SET_ALARM)
+                                      .putExtra(AlarmClock.EXTRA_HOUR, h)
+                                      .putExtra(AlarmClock.EXTRA_MINUTES, mi)
+                                      .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
+                              )
+                          }
+                      }
+                      "timer" -> {
+                          val s = cmd.optInt("seconds")
+                          action = {
+                              startSafe(
+                                  Intent(AlarmClock.ACTION_SET_TIMER)
+                                      .putExtra(AlarmClock.EXTRA_LENGTH, s)
+                                      .putExtra(AlarmClock.EXTRA_SKIP_UI, true)
+                              )
+                          }
+                      }
+                  }
+
+                  val a = action
+                  speaker.speak(reply) {
+                      if (a == null) {
+                          busy = false
+                          listen()
+                      } else {
+                          val ok = a()
+                          if (!ok) {
+                              speaker.speak("Buni bajara olmadim.") { busy = false; listen() }
+                          } else {
+                              busy = false
+                              // boshqa ilova ochilsa, qaytganda onResume davom ettiradi
+                              ui.postDelayed({
+                                  if (convo && !busy && !listening &&
+                                      lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)
+                                  ) listen()
+                              }, 1500)
+                          }
+                      }
+                  }
+              }
+
+              // ---------------------------------------------------------------- actions
+
+              private fun startSafe(i: Intent): Boolean =
+                  try { startActivity(i); true } catch (e: Exception) { false }
+
+              private fun view(uri: String, pkg: String?): Boolean {
+                  val i = Intent(Intent.ACTION_VIEW, Uri.parse(uri))
+                  if (pkg != null) {
+                      try { startActivity(Intent(i).setPackage(pkg)); return true } catch (_: Exception) {}
+                  }
+                  return startSafe(i)
+              }
+
+              private fun sendTelegram(contact: String, message: String): Boolean {
+                  if (!JarvisAccessibilityService.isRunning) {
+                      setLine("Telegramda xabarni o'zi yuborishi uchun Accessibility yoqilishi kerak.")
+                  }
+                  JarvisAccessibilityService.pendingContact = contact
+                  JarvisAccessibilityService.stage = 0
+                  return startSafe(
+                      Intent(Intent.ACTION_SEND).setType("text/plain")
+                          .putExtra(Intent.EXTRA_TEXT, message)
+                          .setPackage("org.telegram.messenger")
+                  )
+              }
+
+              private fun openApp(name: String): Boolean {
+                  val n = name.trim().lowercase()
+                  if (n.isEmpty()) return false
+                  if (n == "kamera" || n == "camera") return startSafe(Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA))
+                  if (n == "sozlamalar" || n == "settings") return startSafe(Intent(Settings.ACTION_SETTINGS))
+                  val pm = packageManager
+                  val launcher = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+                  val hit = pm.queryIntentActivities(launcher, 0)
+                      .firstOrNull { it.loadLabel(pm).toString().contains(name.trim(), true) }
+                      ?: return false
+                  val i = pm.getLaunchIntentForPackage(hit.activityInfo.packageName) ?: return false
+                  return startSafe(i)
+              }
+
+              // ---------------------------------------------------------------- lifecycle
+
+              override fun onResume() {
+                  super.onResume()
+                  if (convo && !busy && !listening) listen()
+              }
+
+              override fun onPause() {
+                  super.onPause()
+                  if (convo) {
+                      recognizer?.cancel()
+                      listening = false
+                  }
+              }
+
+              override fun onDestroy() {
+                  super.onDestroy()
+                  recognizer?.destroy()
+                  speaker.shutdown()
+              }
+          }
+          EOF
+          mkdir -p app/src/main/java/com/example/jarvis
+          cat > app/src/main/java/com/example/jarvis/Speaker.kt << 'EOF'
+          package com.example.jarvis
+
+          import android.content.Context
+          import android.media.MediaPlayer
+          import android.os.Handler
+          import android.speech.tts.TextToSpeech
+          import android.speech.tts.UtteranceProgressListener
+          import java.io.File
+          import java.net.HttpURLConnection
+          import java.net.URL
+          import java.util.Locale
+
+          /**
+           * Ovoz chiqarish. Azure kaliti kiritilgan bo'lsa, haqiqiy erkak ovozi (uz-UZ-SardorNeural),
+           * aks holda telefonning o'z ovozi (past ohangda).
+           */
+          class Speaker(private val ctx: Context, private val ui: Handler) {
+
+              var azureKey = ""
+              var azureRegion = "westeurope"
+
+              private var tts: TextToSpeech? = null
+              private var ttsReady = false
+              private var player: MediaPlayer? = null
+              private var onDone: (() -> Unit)? = null
+              private var token = 0
+
+              init {
+                  tts = TextToSpeech(ctx) { status ->
+                      if (status == TextToSpeech.SUCCESS) {
+                          val t = tts
+                          if (t != null) {
+                              val loc = listOf(Locale("uz", "UZ"), Locale("tr", "TR"), Locale("ru", "RU"), Locale.US)
+                                  .firstOrNull { t.isLanguageAvailable(it) >= TextToSpeech.LANG_AVAILABLE }
+                              if (loc != null) t.language = loc
+                              try {
+                                  val lang = t.language?.language
+                                  val male = t.voices?.firstOrNull {
+                                      it.locale.language == lang &&
+                                          it.name.contains("male", true) && !it.name.contains("female", true)
+                                  }
+                                  if (male != null) t.voice = male
+                              } catch (_: Exception) {}
+                              t.setPitch(0.85f)
+                              t.setSpeechRate(1.0f)
+                              t.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                                  override fun onStart(utteranceId: String?) {}
+                                  override fun onDone(utteranceId: String?) { ui.post { finish() } }
+                                  @Deprecated("Deprecated in Java")
+                                  override fun onError(utteranceId: String?) { ui.post { finish() } }
+                              })
+                              ttsReady = true
+                          }
+                      }
+                  }
+              }
+
+              fun speak(text: String, done: () -> Unit) {
+                  stop()
+                  onDone = done
+                  if (text.isBlank()) { finish(); return }
+                  if (azureKey.isNotBlank()) azure(text) else local(text)
+              }
+
+              fun stop() {
+                  token++
+                  onDone = null
+                  try { tts?.stop() } catch (_: Exception) {}
+                  try { player?.release() } catch (_: Exception) {}
+                  player = null
+              }
+
+              fun shutdown() {
+                  stop()
+                  try { tts?.shutdown() } catch (_: Exception) {}
+              }
+
+              private fun finish() {
+                  try { player?.release() } catch (_: Exception) {}
+                  player = null
+                  val d = onDone
+                  onDone = null
+                  d?.invoke()
+              }
+
+              private fun local(text: String) {
+                  val t = tts
+                  if (!ttsReady || t == null) { finish(); return }
+                  t.speak(text, TextToSpeech.QUEUE_FLUSH, null, "jarvis")
+              }
+
+              private fun esc(s: String) = s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+              private fun azure(text: String) {
+                  val key = azureKey
+                  val region = azureRegion
+                  val gen = ++token
+                  Thread {
+                      var file: File? = null
+                      try {
+                          val conn = URL("https://" + region + ".tts.speech.microsoft.com/cognitiveservices/v1")
+                              .openConnection() as HttpURLConnection
+                          conn.requestMethod = "POST"
+                          conn.doOutput = true
+                          conn.connectTimeout = 10000
+                          conn.readTimeout = 20000
+                          conn.setRequestProperty("Ocp-Apim-Subscription-Key", key)
+                          conn.setRequestProperty("Content-Type", "application/ssml+xml")
+                          conn.setRequestProperty("X-Microsoft-OutputFormat", "audio-24khz-48kbitrate-mono-mp3")
+                          conn.setRequestProperty("User-Agent", "jarvis-android")
+                          val ssml = "<speak version='1.0' xml:lang='uz-UZ'><voice xml:lang='uz-UZ' name='uz-UZ-SardorNeural'>" +
+                              esc(text) + "</voice></speak>"
+                          conn.outputStream.use { it.write(ssml.toByteArray(Charsets.UTF_8)) }
+                          if (conn.responseCode == 200) {
+                              val f = File(ctx.cacheDir, "say.mp3")
+                              conn.inputStream.use { inp -> f.outputStream().use { out -> inp.copyTo(out) } }
+                              file = f
+                          }
+                      } catch (_: Exception) {}
+                      val result = file
+                      ui.post {
+                          if (gen != token) return@post
+                          if (result != null) play(result) else local(text)
+                      }
+                  }.start()
+              }
+
+              private fun play(file: File) {
+                  try {
+                      val mp = MediaPlayer()
+                      player = mp
+                      mp.setDataSource(file.path)
+                      mp.setOnCompletionListener { finish() }
+                      mp.setOnErrorListener { _, _, _ -> finish(); true }
+                      mp.prepare()
+                      mp.start()
+                  } catch (e: Exception) {
+                      finish()
+                  }
+              }
+          }
+          EOF
+          mkdir -p app/src/main/res/xml
+          cat > app/src/main/res/xml/accessibility_service_config.xml << 'EOF'
+          <?xml version="1.0" encoding="utf-8"?>
+          <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+              android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
+              android:accessibilityFeedbackType="feedbackGeneric"
+              android:accessibilityFlags="flagDefault"
+              android:canRetrieveWindowContent="true"
+              android:notificationTimeout="200"
+              android:packageNames="org.telegram.messenger" />
+          EOF
+          cat > build.gradle.kts << 'EOF'
+          plugins {
+              id("com.android.application") version "8.5.2" apply false
+              id("org.jetbrains.kotlin.android") version "1.9.24" apply false
+          }
+          EOF
+          cat > gradle.properties << 'EOF'
+          org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+          android.useAndroidX=true
+          kotlin.code.style=official
+          EOF
+          cat > settings.gradle.kts << 'EOF'
+          pluginManagement {
+              repositories {
+                  google()
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+              repositories {
+                  google()
+                  mavenCentral()
+              }
+          }
+          rootProject.name = "Jarvis"
+          include(":app")
+          EOF
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+
+      - name: Build APK
+        run: gradle assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Jarvis-APK
+          path: app/build/outputs/apk/debug/app-debug.apk
